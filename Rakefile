@@ -1,36 +1,46 @@
 require 'rubygems'
+require 'bundler'
+begin
+  Bundler.setup(:default, :development)
+rescue Bundler::BundlerError => e
+  $stderr.puts e.message
+  $stderr.puts "Run `bundle install` to install missing gems"
+  exit e.status_code
+end
 require 'rake'
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "gmaps_distance"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
-    gem.email = "dirk.breuer@gmail.com"
-    gem.homepage = "http://github.com/railsbros_dirk/gmaps_distance"
-    gem.authors = ["Dirk Breuer"]
-    gem.add_development_dependency "rspec", ">= 1.2.9"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-  end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+require 'jeweler'
+Jeweler::Tasks.new do |gem|
+  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
+  gem.name = "gmaps_directions"
+  gem.homepage = "http://github.com/railsbros_dirk/gmaps_directions"
+  gem.license = "MIT"
+  gem.summary = %Q{A simple Gem to use the Google Maps distance API from Ruby}
+  gem.description = %Q{
+    Sometimes you need to calculate the directions between two different points
+    via Google Maps on your server-side and not on the client. The Google Maps
+    API for that is dead simple and due to this I wrapped calling the API in
+    this little gem.
+  }
+  gem.email = "dirk.breuer@gmail.com"
+  gem.authors = ["Dirk Breuer"]
+  # Include your dependencies below. Runtime dependencies are required when using your gem,
+  # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
+   gem.add_runtime_dependency 'yajl-ruby', '~> 0.8.1'
+   gem.add_development_dependency 'rspec', '~> 2.5'
+end
+Jeweler::RubygemsDotOrgTasks.new
+
+require 'rspec/core'
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
-end
-
-Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.libs << 'lib' << 'spec'
+RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.pattern = 'spec/**/*_spec.rb'
   spec.rcov = true
 end
-
-task :spec => :check_dependencies
 
 task :default => :spec
 
@@ -39,7 +49,7 @@ Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "gmaps_distance #{version}"
+  rdoc.title = "gmaps_directions #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
