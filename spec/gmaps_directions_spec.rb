@@ -132,6 +132,7 @@ describe "GmapsDirections" do
 
   it 'should perform a real request see if everything is parsed correctly' do
     route = GmapsDirections::API.find_directions :from => "1 Infinite Loop, Cupertino",
+                                                 :to => "1200 Park Avenue, Emmerville"
 
     route.duration.should           == 3462
     route.formatted_duration.should == "58 mins"
