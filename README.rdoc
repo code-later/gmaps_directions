@@ -1,9 +1,26 @@
 = gmaps_directions
 
-Description goes here.
+Sometimes you need to calculate the directions between two different points via Google Maps on your server-side and not
+on the client. The Google Maps API for that is dead simple and due to this I wrapped calling the API in this little gem.
+
+== Example
+
+    route = GmapsDirections::API.find_directions :from => "1 Infinite Loop, Cupertino",
+                                                 :to => "1200 Park Avenue, Emmerville"
+
+    route.duration.should           == 3462
+    route.formatted_duration.should == "58 mins"
+    route.distance.should           == 84826
+    route.formatted_distance.should == "84.8 km"
+    route.start_address.should      == "1 Infinite Loop, Cupertino, CA 95014, USA"
+    route.end_address.should        == "1200 Park Ave, Emeryville, CA 94608, USA"
+    route.start_location.should     == { "lat" => 37.3316900, "lng" => -122.0312600 }
+    route.end_location.should       == { "lat" => 37.8317100, "lng" => -122.2833000 }
+    route.status.should             == "OK"
+
 
 == Contributing to gmaps_directions
- 
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
 * Fork the project
