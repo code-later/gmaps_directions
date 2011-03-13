@@ -5,7 +5,7 @@ Google Maps on your server-side and not on the client. The Google Maps API for
 that is dead simple and due to this I wrapped calling the API in this little gem.
 
 The gem talks to the Google Maps Directions Web Service API. Detailed documentation
-for that can be found here: http://code.google.com/apis/maps/documentation/directions/
+for that can be found here[http://code.google.com/apis/maps/documentation/directions]
 This API allows up to 2.500 direction requests. At the current version there is no
 way to use the non-public interface for Google Premium Maps customers. If you want that
 feature right now drop me a patch or wait until I need it too (which might not take too
