@@ -1,9 +1,25 @@
 = gmaps_directions
 
-Sometimes you need to calculate the directions between two different points via Google Maps on your server-side and not
-on the client. The Google Maps API for that is dead simple and due to this I wrapped calling the API in this little gem.
+Sometimes you need to calculate the directions between two different points via
+Google Maps on your server-side and not on the client. The Google Maps API for
+that is dead simple and due to this I wrapped calling the API in this little gem.
+
+The gem talks to the Google Maps Directions Web Service API. Detailed documentation
+for that can be found here: http://code.google.com/apis/maps/documentation/directions/
+This API allows up to 2.500 direction requests. At the current version there is no
+way to use the non-public interface for Google Premium Maps customers. If you want that
+feature right now drop me a patch or wait until I need it too (which might not take too
+long anyway).
+
+One last thing for the interested: The gem consumes the JSON response format from Google
+API and parses it through the Ruby Yajl JSON parser.
 
 == Example
+
+Here is an example of how to use the Gem. As you can see, it is really more than simple:
+
+    require 'rubygems'
+    require 'gmaps_directions'
 
     route = GmapsDirections::API.find_directions :from => "1 Infinite Loop, Cupertino",
                                                  :to => "1200 Park Avenue, Emmerville"
@@ -18,6 +34,24 @@ on the client. The Google Maps API for that is dead simple and due to this I wra
     route.end_location.should       == { "lat" => 37.8317100, "lng" => -122.2833000 }
     route.status.should             == "OK"
 
+== Configuration
+
+Despite the fact that you cannot provide an API-Key I already built some kind of configuration.
+In detail you can configure the following options when talking to Google:
+
+* The type of transportation to use when calculate the direction ('driving', 'walking', 'bicycling')
+* The unit system to use ('metric', 'imperial')
+* The language in which the results is outputted (this includes number formats)
+* The availability of a GPS-sensor
+* Should there alternative routes be calculated
+
+The following snippet shows how to configure those options and what are the defaults:
+
+    GmapsDirections::Config.mode         = :driving
+    GmapsDirections::Config.units        = :metric
+    GmapsDirections::Config.language     = :en
+    GmapsDirections::Config.sensor       = false
+    GmapsDirections::Config.alternatives = false
 
 == Contributing to gmaps_directions
 
