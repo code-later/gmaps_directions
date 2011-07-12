@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{gmaps_directions}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dirk Breuer"]
-  s.date = %q{2011-03-13}
+  s.date = %q{2011-07-12}
   s.description = %q{
     Sometimes you need to calculate the directions between two different points
     via Google Maps on your server-side and not on the client. The Google Maps
@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "gmaps_directions.gemspec",
     "lib/gmaps_directions.rb",
     "spec/gmaps_directions_spec.rb",
     "spec/spec_helper.rb"
