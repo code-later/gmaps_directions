@@ -1,6 +1,7 @@
 require 'yajl'
 require 'yajl/http_stream'
 require 'uri'
+require 'active_support/core_ext/object/blank'
 require 'active_support/configurable'
 require 'active_support/ordered_options'
 
@@ -32,7 +33,13 @@ module GmapsDirections
       def find_directions(options = {})
         api_driver = new(:start_address => options[:from], :end_address => options[:to])
         api_driver.call_google
-        return Route.new(api_driver.parsed_directions_response)
+        if api_driver.parsed_directions_response.present? && api_driver.parsed_directions_response["routes"].present?
+          return api_driver.parsed_directions_response["routes"].inject([]) do |routes, route_hash|
+            routes << Route.new(route_hash, api_driver.parsed_directions_response["status"])
+          end
+        else
+          return []
+        end
       end
     end
 
@@ -63,16 +70,16 @@ module GmapsDirections
                 :start_address, :end_address, :start_location, :end_location,
                 :status
     
-    def initialize(directions_api_response_hash)
-      @duration           = directions_api_response_hash["routes"].first["legs"].first["duration"]["value"]
-      @formatted_duration = directions_api_response_hash["routes"].first["legs"].first["duration"]["text"]
-      @distance           = directions_api_response_hash["routes"].first["legs"].first["distance"]["value"]
-      @formatted_distance = directions_api_response_hash["routes"].first["legs"].first["distance"]["text"]
-      @start_address      = directions_api_response_hash["routes"].first["legs"].first["start_address"]
-      @end_address        = directions_api_response_hash["routes"].first["legs"].first["end_address"]
-      @start_location     = directions_api_response_hash["routes"].first["legs"].first["start_location"]
-      @end_location       = directions_api_response_hash["routes"].first["legs"].first["end_location"]
-      @status             = directions_api_response_hash["status"]
+    def initialize(gmaps_route_hash, status)
+      @duration           = gmaps_route_hash["legs"].first["duration"]["value"]
+      @formatted_duration = gmaps_route_hash["legs"].first["duration"]["text"]
+      @distance           = gmaps_route_hash["legs"].first["distance"]["value"]
+      @formatted_distance = gmaps_route_hash["legs"].first["distance"]["text"]
+      @start_address      = gmaps_route_hash["legs"].first["start_address"]
+      @end_address        = gmaps_route_hash["legs"].first["end_address"]
+      @start_location     = gmaps_route_hash["legs"].first["start_location"]
+      @end_location       = gmaps_route_hash["legs"].first["end_location"]
+      @status             = status
     end
   end
 

@@ -7,7 +7,7 @@ describe "GmapsDirections" do
     end_address   = "Just Avenue 42, 11111 Sin City"
 
     directions_api_url = URI.parse("http://maps.googleapis.com/maps/api/directions/json?origin=#{URI.encode(start_address)}&destination=#{URI.encode(end_address)}&mode=driving&units=metric&language=en&sensor=false&alternatives=false")
-    Yajl::HttpStream.should_receive(:get).with(directions_api_url)
+    Yajl::HttpStream.should_receive(:get).with(directions_api_url).and_yield({"routes" => [double("route_hash")], "status" => "OK"})
     GmapsDirections::Route.should_receive(:new)
 
     GmapsDirections::API.find_directions :from => start_address, :to => end_address
@@ -55,40 +55,38 @@ describe "GmapsDirections" do
     before(:each) do
       @route = GmapsDirections::Route.new(
         {
-          "status" => "OK",
-          "routes" => [ {
-            "summary" => "Luxemburger Str./B265",
-            "legs" => [ {
-              "steps" => [ { 
-                "travel_mode" => "DRIVING",
-                "start_location" => { "lat" => 50.9280500, "lng" => 6.9397100 },
-                "end_location" => { "lat" => 50.9274800, "lng" => 6.9397800 },
-                "polyline" => { },
-                "duration" => { "value" => 11, "text" => "1 min" },
-                "html_instructions" => "",
-                "distance" => { "value" => 63, "text" => "63 m" }
-              } ],
-              "duration" => {
-                "value" => 476,
-                "text" => "8 mins"
-              },
-              "distance" => {
-                "value" => 3166,
-                "text" => "3.2 km"
-              },
+          "summary" => "Luxemburger Str./B265",
+          "legs" => [ {
+            "steps" => [ { 
+              "travel_mode" => "DRIVING",
               "start_location" => { "lat" => 50.9280500, "lng" => 6.9397100 },
-              "end_location" => { "lat" => 50.9093600, "lng" => 6.9246200 },
-              "start_address" => "Somestr. 23, 99999 Any City, USA",
-              "end_address" => "Just Avenue 42, 11111 Sin City, USA",
-              "via_waypoint" => [ ]
+              "end_location" => { "lat" => 50.9274800, "lng" => 6.9397800 },
+              "polyline" => { },
+              "duration" => { "value" => 11, "text" => "1 min" },
+              "html_instructions" => "",
+              "distance" => { "value" => 63, "text" => "63 m" }
             } ],
-            "copyrights" => "Map data ©2011 Tele Atlas",
-            "overview_polyline" => { },
-            "warnings" => [ ],
-            "waypoint_order" => [ ],
-            "bounds" => { }
-          } ]
-        }
+            "duration" => {
+              "value" => 476,
+              "text" => "8 mins"
+            },
+            "distance" => {
+              "value" => 3166,
+              "text" => "3.2 km"
+            },
+            "start_location" => { "lat" => 50.9280500, "lng" => 6.9397100 },
+            "end_location" => { "lat" => 50.9093600, "lng" => 6.9246200 },
+            "start_address" => "Somestr. 23, 99999 Any City, USA",
+            "end_address" => "Just Avenue 42, 11111 Sin City, USA",
+            "via_waypoint" => [ ]
+          } ],
+          "copyrights" => "Map data ©2011 Tele Atlas",
+          "overview_polyline" => { },
+          "warnings" => [ ],
+          "waypoint_order" => [ ],
+          "bounds" => { }
+        },
+        "OK"
       )
     end
     
@@ -131,16 +129,18 @@ describe "GmapsDirections" do
   end
 
   it 'should perform a real request see if everything is parsed correctly' do
-    route = GmapsDirections::API.find_directions :from => "1 Infinite Loop, Cupertino",
-                                                 :to => "1200 Park Avenue, Emmerville"
+    routes = GmapsDirections::API.find_directions :from => "1 Infinite Loop, Cupertino",
+                                                  :to => "1200 Park Avenue, Emmerville"
 
-    route.duration.should           == 3462
+    route = routes.first
+
+    route.duration.should           == 3482
     route.formatted_duration.should == "58 mins"
-    route.distance.should           == 84826
+    route.distance.should           == 84827
     route.formatted_distance.should == "84.8 km"
     route.start_address.should      == "1 Infinite Loop, Cupertino, CA 95014, USA"
     route.end_address.should        == "1200 Park Ave, Emeryville, CA 94608, USA"
-    route.start_location.should     == { "lat" => 37.3316900, "lng" => -122.0312600 }
+    route.start_location.should     == { "lng" => -122.03125, "lat" => 37.3317 }
     route.end_location.should       == { "lat" => 37.8317100, "lng" => -122.2833000 }
     route.status.should             == "OK"
   end
