@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "GmapsDirections" do
@@ -7,7 +9,10 @@ describe "GmapsDirections" do
     end_address   = "Just Avenue 42, 11111 Sin City"
 
     directions_api_url = URI.parse("http://maps.googleapis.com/maps/api/directions/json?origin=#{URI.encode(start_address)}&destination=#{URI.encode(end_address)}&mode=driving&units=metric&language=en&sensor=false&alternatives=false")
-    Yajl::HttpStream.should_receive(:get).with(directions_api_url).and_yield({"routes" => [double("route_hash")], "status" => "OK"})
+
+    ::Net::HTTP.should_receive(:get_response).with(directions_api_url).and_return(double("response", :body => ""))
+    ::Yajl::Parser.should_receive(:parse).and_return({"routes" => [double("route_hash")], "status" => "OK"})
+
     GmapsDirections::Route.should_receive(:new)
 
     GmapsDirections::API.find_directions :from => start_address, :to => end_address
@@ -128,19 +133,19 @@ describe "GmapsDirections" do
 
   end
 
-  it 'should perform a real request see if everything is parsed correctly' do
+  it 'should perform a real request and see if everything is parsed correctly' do
     routes = GmapsDirections::API.find_directions :from => "1 Infinite Loop, Cupertino",
-                                                  :to => "1200 Park Avenue, Emmerville"
+                                                  :to => "1200 Park Ave, Emeryville"
 
     route = routes.first
 
-    route.duration.should           == 3482
+    (route.duration / 60).should    == 58
     route.formatted_duration.should == "58 mins"
-    route.distance.should           == 84827
-    route.formatted_distance.should == "84.8 km"
+    (route.distance / 1000).should  == 85
+    route.formatted_distance.should == "85.2 km"
     route.start_address.should      == "1 Infinite Loop, Cupertino, CA 95014, USA"
     route.end_address.should        == "1200 Park Ave, Emeryville, CA 94608, USA"
-    route.start_location.should     == { "lng" => -122.03125, "lat" => 37.3317 }
+    route.start_location.should     == { "lng" => -122.0291, "lat" => 37.33051 }
     route.end_location.should       == { "lat" => 37.8317100, "lng" => -122.2833000 }
     route.status.should             == "OK"
   end
