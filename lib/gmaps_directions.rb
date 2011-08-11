@@ -4,6 +4,7 @@ require 'uri'
 require 'active_support/core_ext/object/blank'
 require 'active_support/configurable'
 require 'active_support/ordered_options'
+require 'net/http'
 
 module GmapsDirections
 
@@ -53,9 +54,8 @@ module GmapsDirections
     end
 
     def call_google
-      Yajl::HttpStream.get(directions_api_url) do |results_hash|
-        @parsed_directions_response = results_hash
-      end
+      response = Net::HTTP.get_response(directions_api_url).body
+      @parsed_directions_response = Yajl::Parser.parse(response)
     end
 
     private
