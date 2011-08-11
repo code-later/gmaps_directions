@@ -7,7 +7,10 @@ describe "GmapsDirections" do
     end_address   = "Just Avenue 42, 11111 Sin City"
 
     directions_api_url = URI.parse("http://maps.googleapis.com/maps/api/directions/json?origin=#{URI.encode(start_address)}&destination=#{URI.encode(end_address)}&mode=driving&units=metric&language=en&sensor=false&alternatives=false")
-    Yajl::HttpStream.should_receive(:get).with(directions_api_url).and_yield({"routes" => [double("route_hash")], "status" => "OK"})
+
+    ::Net::HTTP.should_receive(:get_response).with(directions_api_url).and_return(double("response", :body => ""))
+    ::Yajl::Parser.should_receive(:parse).and_return({"routes" => [double("route_hash")], "status" => "OK"})
+
     GmapsDirections::Route.should_receive(:new)
 
     GmapsDirections::API.find_directions :from => start_address, :to => end_address
