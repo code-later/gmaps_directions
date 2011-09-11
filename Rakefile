@@ -27,8 +27,9 @@ Jeweler::Tasks.new do |gem|
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
    gem.add_runtime_dependency 'yajl-ruby', '~> 0.8.1'
-   gem.add_runtime_dependency 'activesupport', '~> 3.0.4'
-   gem.add_development_dependency 'rspec', '~> 2.5'
+   gem.add_runtime_dependency 'activesupport', '>= 3.0.4'
+   gem.add_development_dependency 'rspec', '~> 2.5.0'
+   gem.add_development_dependency 'jeweler', '~> 1.5.2'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
