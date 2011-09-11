@@ -139,14 +139,14 @@ describe "GmapsDirections" do
 
     route = routes.first
 
-    (route.duration / 60).should    == 58
-    route.formatted_duration.should == "58 mins"
-    (route.distance / 1000).should  == 85
-    route.formatted_distance.should == "85.2 km"
-    route.start_address.should      == "1 Infinite Loop, Cupertino, CA 95014, USA"
-    route.end_address.should        == "1200 Park Ave, Emeryville, CA 94608, USA"
-    route.start_location.should     == { "lng" => -122.0291, "lat" => 37.33051 }
-    route.end_location.should       == { "lat" => 37.8317100, "lng" => -122.2833000 }
-    route.status.should             == "OK"
+    (route.duration / 60).should          == 58
+    route.formatted_duration.should       == "58 mins"
+    (route.distance / 1000.0).ceil.should == 85
+    route.formatted_distance.should       == "84.9 km"
+    route.start_address.should            == "1 Infinite Loop, Cupertino, CA 95014, USA"
+    route.end_address.should              == "1200 Park Ave, Emeryville, CA 94608, USA"
+    route.start_location.should           == { "lng" => -122.0307500, "lat" => 37.3316800 }
+    route.end_location.should             == { "lat" => 37.8317100, "lng" => -122.2833000 }
+    route.status.should                   == "OK"
   end
 end
